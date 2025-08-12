@@ -5,95 +5,82 @@ This repository contains the official implementation of the detection pipeline d
 [![PyTorch](https://img.shields.io/badge/pytorch-2.2.1-orange)](https://pytorch.org/get-started/previous-versions/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
+---
 
-## 📦 Installation
+## 🖧 Overall Architecture
+![Architecture](https://github.com/CNNanmuzi/CEVG-RTNet/blob/main/CEVG-RTNet.png)
+
+---
+
+## ✨ Highlights
+
+- Propose CEVG-RTNet for high-accuracy, real-time smoke detection on low-power devices.  
+- Introduce SCPP-Conv to boost detection in low-contrast, transparent smoke scenes.  
+- Use HRFA for multi-scale fusion and alignment of local details and global context.
+- Design DRFE to enhance adaptability via recursive and cross-channel attention.
+- Propose PolyIoU loss modeling shape, size, position via dynamic weights for accuracy.
+
+---
+
+## 📦 Requirements
 
 **Tested environment：**
-- Python 3.10
-- PyTorch 2.2.1
-- CUDA 12.1
+- Python 3.10  
+- PyTorch 2.2.1  
+- CUDA 12.1  
 
-**Steps：**
+**Installation：**
 ```bash
-git clone https://github.com/CNNanmuzi/CEVG-RTNet/.git
-cd <CEVG-RTNet>
+git clone https://github.com/CNNanmuzi/CEVG-RTNet.git
+cd CEVG-RTNet
 pip install -r requirements.txt
 ```
 
 ---
 
-## 📂 Data Preparation / 数据准备
+## 📂 Dataset
 
-1. Download the dataset from [<Dataset Link>]  
-   从 [<数据集下载链接>] 下载数据集  
-2. Extract it into the `data/` directory, or update the path in `configs/config.yaml`  
-   解压到 `data/` 目录，或在 `configs/config.yaml` 中修改路径
+The datasets used in this study consist of **public datasets** and **private datasets**.
 
-**Expected folder structure / 期望的数据目录结构：**
-```
-data/
-    dataset_folder/
-        images/
-        labels/
-```
+### 📖 Public Datasets
+- **SWFU-MTD**  
+  🔗 [https://github.com/vinchole/zzzccc](https://github.com/vinchole/zzzccc)  
+- **D-Fire**  
+  🔗 [https://github.com/gaiasd/DFireDataset](https://github.com/gaiasd/DFireDataset)  
+
+### 🔒 Private Dataset
+The private dataset contains unpublished experimental data and critical samples required for subsequent research.  
+To avoid affecting ongoing work, it is not publicly available at this time.  
+Once the paper is officially accepted, researchers with reasonable academic needs may contact the corresponding author to request access.
 
 ---
 
-## 🚀 Running Experiments / 运行实验
+## 🚀 Experimental Run
 
-### Run the default experiment (reproduces Table 2 from the paper)  
-运行默认实验（复现论文 Table 2 结果）：
+### Training  
 ```bash
-bash scripts/run_experiment.sh
+python train.py --cfg YOLO11-CRNet.yaml --data firesmoke.yaml --epochs 150 --imgsz 640 --batch 16 --device 0 --workers 8
 ```
 
-### Run with a custom config / 使用自定义配置文件运行：
+### Validation
 ```bash
-python src/main.py --config configs/config.yaml
+python val.py --weights best.pt --data firesmoke.yaml --imgsz 640 --batch 1 --device 0
 ```
 
----
-
-## 📊 Expected Results / 期望结果
-
-If everything is set up correctly, you should see results similar to those in the paper.  
-如果环境配置正确，结果应与论文中报告的指标接近。
-
-**Example output / 示例输出：**
+### Inference
+```bash
+python predict.py --weights best.pt --source ./test/images/ --imgsz 640 --conf 0.25 --device 0
 ```
-mAP: 78.5
-Precision: 82.1
-Recall: 77.4
-```
-
 ---
 
-## ⚙ Configuration / 配置说明
-
-Modify `configs/config.yaml` to change / 修改 `configs/config.yaml` 可以调整：
-- Dataset path / 数据集路径
-- Model architecture / 模型结构
-- Training hyperparameters / 训练超参数
-
----
-
-## 📜 Citation / 引用
+## 📜 Citation
 
 If you use this code in your research, please cite:  
-如果您在研究中使用了本代码，请引用：
-
 ```bibtex
-@inproceedings{<yourname2025detection>,
-  title={<Your Paper Title>},
-  author={<Author1> and <Author2> and <Author3>},
-  booktitle={<Conference/Journal>},
+@inproceedings{CEVG-RTNet2025,
+  title={CEVG-RTNet: A real-time architecture for robust forest fire smoke detection in complex environments},
+  author={Wang, Jun and Yan, Chunman},
+  booktitle={Neural Networks},
   year={2025}
 }
 ```
-
----
-
-## 📧 Contact / 联系方式
-
-For questions, please contact / 如有问题，请联系：
-- <your.email@example.com>
